@@ -21,7 +21,7 @@ function Shoppies(){
     const [nominations, setNominations] = useState([])
 
     const addNomination = (event, movie) => {
-        axios.post('http://localhost:8000/api/nominate', {'movieID': movie.imdbID}).then(response => {
+        axios.post('http://localhost:8000/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
             console.log(response);
         })
         event.target.disabled = true
@@ -31,7 +31,7 @@ function Shoppies(){
     }
 
     const removeNomination = (movie) => {
-        axios.post('http://localhost:8000/api/remove', {'movieID': movie.imdbID}).then(response => {
+        axios.post('http://localhost:8000/api/nomination/remove', {'movieID': movie.imdbID}).then(response => {
             console.log(response);
         })
         let arr = [...nominations]
@@ -47,7 +47,7 @@ function Shoppies(){
     }
 
     useEffect(()=>{
-        axios.get('http://localhost:8000/api/getNominations').then(response => {
+        axios.get('http://localhost:8000/api/nomination/getNominations').then(response => {
             let arr = []
             response.data.nominations.forEach(nomination => {
                 arr.push(nomination.imdbID)

@@ -12,7 +12,7 @@ function Main(){
         sessionStorage.setItem('visited', 'true')
     } 
     const time = new Date()
-    time.setSeconds(time.getSeconds()+5)
+    time.setSeconds(time.getSeconds()+10)
     expiryTimestamp = time
 
     const {

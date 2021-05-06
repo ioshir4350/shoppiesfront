@@ -1,7 +1,7 @@
-import Main from './components/Main'
+import Main from './pages/Main'
 import NavBar from './components/NavBar'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-import Features from './components/Features'
+import Features from './pages/Features'
 function App() {
   return (
     <div className="App">
