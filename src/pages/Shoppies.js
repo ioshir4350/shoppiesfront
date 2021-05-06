@@ -21,8 +21,8 @@ function Shoppies(){
     const [nominations, setNominations] = useState([])
 
     const addNomination = (event, movie) => {
-        axios.post('https://shoppiesbackend.herokuapp.com/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
-            console.log(process.env.REACT_APP_API);
+        axios.post(process.env.REACT_APP_API+'/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
+            console.log();
         })
         event.target.disabled = true
         setNominations(prevArr => {
@@ -31,7 +31,7 @@ function Shoppies(){
     }
 
     const removeNomination = (movie) => {
-        axios.post('https://shoppiesbackend.herokuapp.com/api/nomination/remove', {'movieID': movie.imdbID}).then(response => {
+        axios.post(process.env.REACT_APP_API+'/api/nomination/remove', {'movieID': movie.imdbID}).then(response => {
             console.log(response);
         })
         let arr = [...nominations]
@@ -47,7 +47,7 @@ function Shoppies(){
     }
 
     useEffect(()=>{
-        axios.get('https://shoppiesbackend.herokuapp.com/api/nomination/getNominations').then(response => {
+        axios.get(process.env.REACT_APP_API+'/api/nomination/getNominations').then(response => {
             let arr = []
             response.data.nominations.forEach(nomination => {
                 arr.push(nomination.imdbID)
@@ -66,7 +66,7 @@ function Shoppies(){
     }
 
     const searchHandler = (event) => {
-        axios.get('https://www.omdbapi.com/?s='+event.target.value+'&apikey=4bf894c9').then(response => {
+        axios.get('https://www.omdbapi.com/?s='+event.target.value+'&apikey='+process.env.REACT_APP_OAPI).then(response => {
             console.log(response.data);
             if (response.data.Response === 'True'){
                 resultsHandler(response.data.Search)
@@ -76,7 +76,7 @@ function Shoppies(){
     }
 
     const movieHoverHandler = (event) => {
-        axios.get('https://www.omdbapi.com/?i='+event.imdbID+'&apikey=4bf894c9').then(response => {
+        axios.get('https://www.omdbapi.com/?i='+event.imdbID+'&apikey='+process.env.REACT_APP_OAPI).then(response => {
             let obj = {...event}
             obj.Plot = response.data.Plot
             obj.Actors = response.data.Actors
