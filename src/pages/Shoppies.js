@@ -22,7 +22,7 @@ function Shoppies(){
 
     const addNomination = (event, movie) => {
         axios.post('https://shoppiesbackend.herokuapp.com/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
-            console.log(process.env.API);
+            console.log(process.env.REACT_APP_API);
         })
         event.target.disabled = true
         setNominations(prevArr => {
