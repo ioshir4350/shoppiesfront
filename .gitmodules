@@ -1,0 +1,3 @@
+[submodule "shoppiesbackend"]
+	path = shoppiesbackend
+	url = https://github.com/ioshir4350/shoppiesbackend.git
