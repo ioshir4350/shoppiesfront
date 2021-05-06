@@ -21,8 +21,8 @@ function Shoppies(){
     const [nominations, setNominations] = useState([])
 
     const addNomination = (event, movie) => {
-        axios.post(process.env.API+'/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
-            console.log(response);
+        axios.post('https://shoppiesbackend.herokuapp.com/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
+            console.log(process.env.API);
         })
         event.target.disabled = true
         setNominations(prevArr => {
@@ -31,7 +31,7 @@ function Shoppies(){
     }
 
     const removeNomination = (movie) => {
-        axios.post(process.env.API+'/api/nomination/remove', {'movieID': movie.imdbID}).then(response => {
+        axios.post('https://shoppiesbackend.herokuapp.com/api/nomination/remove', {'movieID': movie.imdbID}).then(response => {
             console.log(response);
         })
         let arr = [...nominations]
@@ -47,7 +47,7 @@ function Shoppies(){
     }
 
     useEffect(()=>{
-        axios.get(process.env.API+'/api/nomination/getNominations').then(response => {
+        axios.get('https://shoppiesbackend.herokuapp.com/api/nomination/getNominations').then(response => {
             let arr = []
             response.data.nominations.forEach(nomination => {
                 arr.push(nomination.imdbID)
