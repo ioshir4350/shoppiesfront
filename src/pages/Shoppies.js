@@ -32,7 +32,7 @@ function Shoppies(){
 
     const removeNomination = (movie) => {
         axios.post(process.env.REACT_APP_API+'/api/nomination/remove', {'movieID': movie.imdbID}).then(response => {
-            console.log(response);
+            console.log();
         })
         let arr = [...nominations]
         const index = arr.indexOf(movie)
@@ -67,7 +67,6 @@ function Shoppies(){
 
     const searchHandler = (event) => {
         axios.get('https://www.omdbapi.com/?s='+event.target.value+'&apikey='+process.env.REACT_APP_OAPI).then(response => {
-            console.log(response.data);
             if (response.data.Response === 'True'){
                 resultsHandler(response.data.Search)
             } 
@@ -80,7 +79,6 @@ function Shoppies(){
             let obj = {...event}
             obj.Plot = response.data.Plot
             obj.Actors = response.data.Actors
-            console.log(obj);
             popMovieHandler(obj)
         }) 
     }
