@@ -66,7 +66,7 @@ function Shoppies(){
     }
 
     const searchHandler = (event) => {
-        axios.get('http://www.omdbapi.com/?s='+event.target.value+'&apikey=4bf894c9').then(response => {
+        axios.get('https://www.omdbapi.com/?s='+event.target.value+'&apikey=4bf894c9').then(response => {
             console.log(response.data);
             if (response.data.Response === 'True'){
                 resultsHandler(response.data.Search)
@@ -76,7 +76,7 @@ function Shoppies(){
     }
 
     const movieHoverHandler = (event) => {
-        axios.get('http://www.omdbapi.com/?i='+event.imdbID+'&apikey=4bf894c9').then(response => {
+        axios.get('https://www.omdbapi.com/?i='+event.imdbID+'&apikey=4bf894c9').then(response => {
             let obj = {...event}
             obj.Plot = response.data.Plot
             obj.Actors = response.data.Actors
