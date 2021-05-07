@@ -12,8 +12,7 @@ function Features(){
                         1) User-specialized data -> I thought for such a simple site, users
                         would not want to go through the whole hassle of signing up and signing in.
                         So, I used their local machine IP addresses to differentiate users. Their 
-                        IP Addresses are stored in a MongoDB database, but they're hashed with md5, so
-                        no one would be able to see the actual IP address. This implies that I have added
+                        IP Addresses are stored in a MongoDB database. This implies that I have added
                         a back end.
                         </ListGroup.Item>
                         <ListGroup.Item style={{textAlign : 'left'}}>

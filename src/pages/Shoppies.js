@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react'
-import {Image, Popover, OverlayTrigger, Card, InputGroup, FormControl, Container, Col, Row, ListGroup} from 'react-bootstrap'
+import {Image, Popover, OverlayTrigger, Card, InputGroup, FormControl, Container, Col, Row, ListGroup, Modal, Button} from 'react-bootstrap'
 import axios from 'axios'
 
 function Shoppies(){
@@ -11,6 +11,14 @@ function Shoppies(){
         setMovieIDs(arr)
     }
 
+    const [showDoneAlert, setDoneAlert] = useState(false)
+    const handleDoneShow = () => setDoneAlert(true)
+    const handleDoneClose = () => setDoneAlert(false)
+
+    const [showFinAlert, setFinAlert] = useState(false)
+    const handleFinShow = () => setFinAlert(true)
+    const handleFinClose = () => setFinAlert(false)
+
     const myRefs = useRef([])
 
 
@@ -21,11 +29,21 @@ function Shoppies(){
     const [nominations, setNominations] = useState([])
 
     const addNomination = (event, movie) => {
+        if (nominations.length == 5){
+            // alert("You have reached your limit of 5 ")
+            handleDoneShow()
+            return
+        }
+
         axios.post(process.env.REACT_APP_API+'/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
             console.log();
         })
         event.target.disabled = true
         setNominations(prevArr => {
+            if (prevArr.length == 4) {
+                handleFinShow()
+                // alert("You are finished nominating! Thank you for participating.")
+            }
             return prevArr.concat(movie)
         })
     }
@@ -100,6 +118,28 @@ function Shoppies(){
       );
     return (
         <div style={{paddingTop: '65px'}}>
+            <Modal show={showDoneAlert} onHide={handleDoneClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Whoops!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>You have already reached your limit of 5 nominations!</Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleDoneClose}>
+                    Close
+                </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showFinAlert} onHide={handleFinClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Congratulations!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>You are finished nominating! Thank you for participating.</Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleFinClose}>
+                    Close
+                </Button>
+                </Modal.Footer>
+            </Modal>
             <Card style={{ borderRadius: '5px', width:'60%', margin: 'auto' }}>
                 <Card.Body>
                     <Card.Title style={{textAlign:"left"}}>Search</Card.Title>
