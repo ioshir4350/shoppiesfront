@@ -1,11 +1,20 @@
 import React, {useState, useRef, useEffect} from 'react'
-import {Image, Popover, OverlayTrigger, Card, InputGroup, FormControl, Container, Col, Row, ListGroup, Modal, Button} from 'react-bootstrap'
+import {Image, Popover, OverlayTrigger, Button, Card, InputGroup, FormControl, Container, Col, Row, ListGroup, Modal} from 'react-bootstrap'
 import axios from 'axios'
 
 function Shoppies(){
 
 
     const [movieIDs, setMovieIDs] = useState([])
+    const [email, setEmail] = useState("")
+
+    const emailChangeHandler = (event) => {
+        console.log('here');
+        console.log(event);
+        console.log(event.target.value);
+        setEmail(event.target.value)
+    }
+
 
     const movieIDHandler = (arr) => {
         setMovieIDs(arr)
@@ -19,6 +28,10 @@ function Shoppies(){
     const handleFinShow = () => setFinAlert(true)
     const handleFinClose = () => setFinAlert(false)
 
+    const [showEmailPopup, setEmailPopup] = useState(false)
+    const handleEmailShow = () => setEmailPopup(true)
+    const handleEmailClose = () => setEmailPopup(false)
+
     const myRefs = useRef([])
 
 
@@ -28,29 +41,40 @@ function Shoppies(){
 
     const [nominations, setNominations] = useState([])
 
+    const [lastClickedMovie, setLastMovie] = useState({})
+
     const addNomination = (event, movie) => {
-        if (nominations.length == 5){
+        console.log('here', localStorage.getItem('email'));
+        if (nominations.length === 5){
             // alert("You have reached your limit of 5 ")
             handleDoneShow()
             return
         }
-
-        axios.post(process.env.REACT_APP_API+'/api/nomination/nominate', {'movieID': movie.imdbID}).then(response => {
-            console.log();
-        })
-        event.target.disabled = true
-        setNominations(prevArr => {
-            if (prevArr.length == 4) {
-                handleFinShow()
-                // alert("You are finished nominating! Thank you for participating.")
+        else{
+            if (localStorage.getItem('email') === null){
+                console.log('here', localStorage.getItem('email'));
+                setLastMovie(movie)
+                handleEmailShow()
+                return
             }
-            return prevArr.concat(movie)
-        })
+            else{
+            axios.post(process.env.REACT_APP_API+'/api/nomination/nominate', {'movieID': movie.imdbID, 'email': localStorage.getItem('email')}).then(response => {
+                console.log(response);
+            })
+            event.target.disabled = true
+            setNominations(prevArr => {
+                if (prevArr.length === 4) {
+                    handleFinShow()
+                }
+                return prevArr.concat(movie)
+            })
+        }
+    }
     }
 
     const removeNomination = (movie) => {
         axios.post(process.env.REACT_APP_API+'/api/nomination/remove', {'movieID': movie.imdbID}).then(response => {
-            console.log();
+            console.log(response);
         })
         let arr = [...nominations]
         const index = arr.indexOf(movie)
@@ -65,14 +89,17 @@ function Shoppies(){
     }
 
     useEffect(()=>{
-        axios.get(process.env.REACT_APP_API+'/api/nomination/getNominations').then(response => {
-            let arr = []
-            response.data.nominations.forEach(nomination => {
-                arr.push(nomination.imdbID)
-            });
-            movieIDHandler(arr)
-            setNominations(response.data.nominations)
-        })
+        console.log(localStorage.getItem('email'));
+        if (localStorage.getItem('email')){
+            axios.get(process.env.REACT_APP_API+'/api/nomination/getNominations/'+localStorage.getItem('email')).then(response => {
+                let arr = []
+                response.data.nominations.forEach(nomination => {
+                    arr.push(nomination.imdbID)
+                });
+                movieIDHandler(arr)
+                setNominations(response.data.nominations)
+            })
+    }
     }, [])
 
     const popMovieHandler = (obj) => {
@@ -84,7 +111,8 @@ function Shoppies(){
     }
 
     const searchHandler = (event) => {
-        axios.get('https://www.omdbapi.com/?s='+event.target.value+'&apikey='+process.env.REACT_APP_OAPI).then(response => {
+        axios.get('https://www.omdbapi.com/?s='+event.target.value+'&apikey=4bf894c9').then(response => {
+            console.log(response.data);
             if (response.data.Response === 'True'){
                 resultsHandler(response.data.Search)
             } 
@@ -93,10 +121,11 @@ function Shoppies(){
     }
 
     const movieHoverHandler = (event) => {
-        axios.get('https://www.omdbapi.com/?i='+event.imdbID+'&apikey='+process.env.REACT_APP_OAPI).then(response => {
+        axios.get('https://www.omdbapi.com/?i='+event.imdbID+'&apikey=4bf894c9').then(response => {
             let obj = {...event}
             obj.Plot = response.data.Plot
             obj.Actors = response.data.Actors
+            console.log(obj);
             popMovieHandler(obj)
         }) 
     }
@@ -116,6 +145,58 @@ function Shoppies(){
         </Popover.Content>
         </Popover>
       );
+
+    const [codePopup, showCodePopup] = useState(false)
+    const handleCodePopupShow = () => showCodePopup(true)
+    const handleCodePopupClose = () => showCodePopup(false)
+    
+    const [codeInput, setCodeInput] = useState('')
+    const codeInputChangeHandler = (event) => {
+        console.log('here');
+        setCodeInput(event.target.value)
+        console.log(event);
+        console.log('here');
+    }
+
+    const [code, setCode] = useState('')
+
+    const sendCodeHandler = () => {
+        console.log(email);
+        axios.post(process.env.REACT_APP_API+'/api/auth/sendCode', {email: email}).then(response => {
+            if (response.data.status == "invalid"){
+                alert('Email does not exist')
+            }
+            else{
+                console.log(response);
+                handleEmailClose()
+                handleCodePopupShow()
+                setCode(response.data.code)
+            }
+        })
+    }
+
+    const submitCodeHandler = () => {
+        console.log('here');
+        console.log(code);
+        console.log(codeInput);
+        if (code === codeInput){
+            
+            axios.post(process.env.REACT_APP_API+'/api/auth/login', {email: email, lastClickedMovie: lastClickedMovie}).then(response =>{
+                console.log(response);
+                localStorage.setItem('email', email)
+                window.location = '/'
+            })
+        }
+        else{
+            alert("Code is incorrect!")
+        }
+    }
+
+    const emailChange = (event) => {
+        console.log('here');
+        console.log(event);
+    }
+
     return (
         <div style={{paddingTop: '65px'}}>
             <Modal show={showDoneAlert} onHide={handleDoneClose}>
@@ -140,6 +221,61 @@ function Shoppies(){
                 </Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={showEmailPopup} onHide={handleEmailClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Please provide email.</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    
+
+                    
+                <InputGroup className="mb-3">
+                    <InputGroup.Prepend>
+                    <InputGroup.Text id="basic-addon1">Email</InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                    placeholder="Example: isfaroshir@gmail.com"
+                    aria-label="Email"
+                    aria-describedby="basic-addon1"
+                    name="email23"
+                    onChange={emailChangeHandler}
+                    />
+                </InputGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleEmailClose}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={sendCodeHandler}>Send Code</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={codePopup} onHide={handleCodePopupClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Please provide the emailed code. {codePopup}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <InputGroup className="mb-3">
+                    <InputGroup.Prepend>
+                    <InputGroup.Text id="basic-addon1">Code</InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                    placeholder="Code"
+                    aria-label="Email"
+                    name="pass23"
+                    aria-describedby="basic-addon1"
+                    onChange={codeInputChangeHandler}
+                    />
+                </InputGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleCodePopupClose}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={submitCodeHandler}>Submit Code</Button>
+                </Modal.Footer>
+            </Modal>
+        
             <Card style={{ borderRadius: '5px', width:'60%', margin: 'auto' }}>
                 <Card.Body>
                     <Card.Title style={{textAlign:"left"}}>Search</Card.Title>

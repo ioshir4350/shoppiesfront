@@ -10,10 +10,10 @@ function Features(){
                     <ListGroup>
                         <ListGroup.Item style={{textAlign : 'left'}}>
                         1) User-specialized data -> I thought for such a simple site, users
-                        would not want to go through the whole hassle of signing up and signing in.
-                        So, I used their local machine IP addresses to differentiate users. Their 
-                        IP Addresses are stored in a MongoDB database. This implies that I have added
-                        a back end.
+                        would not want to go through the whole hassle of signing up and signing in
+                        through a whole form.
+                        So, the user just has to provide their email, and a unique code will be sent to them, which they then provide to the website to
+                        complete the login process.
                         </ListGroup.Item>
                         <ListGroup.Item style={{textAlign : 'left'}}>
                         2) If you hover over the movie title, an overlay appears
