@@ -12,6 +12,8 @@ https://shoppiesfront.herokuapp.com/
 
 4) Loading Page with Animation (CSS) - Only appears on a new tab, not reload (Implemented using browser session storage)
 
+5) Used environment variables to secure app.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
