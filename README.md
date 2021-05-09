@@ -2,6 +2,8 @@
 
 https://shoppiesfront.herokuapp.com/
 
+Please reload the site a few times if you keep receiving an application eror page from heroku. I am using the free version, so it will need to be woken up from its idle state.
+
 # Extra Features
 
 1) User-specialized data -> I thought for such a simple site, users would not want to go through the whole hassle of signing up and signing in through a whole form. So, the user just has to provide their email, and a unique code will be sent to them, which they then provide to the website to complete the login process.
